@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Only load things from our own site. Keeps the page safe once it is published. -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'; worker-src 'self'; connect-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>DDNet Demo Analyzer</title>
+  <link rel="stylesheet" href="css/style.css?v=20261029n">
+  <!-- Static hosts cannot send COOP/COEP headers. This worker adds them, which the
+       threaded WebAssembly client needs for SharedArrayBuffer. It reloads the page
+       once on the very first visit, and does nothing when the headers are present. -->
+  <script src="coi-serviceworker.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>DDNet Demo Analyzer</h1>
+    <p>Drop a <code>.demo</code> file to see how often everyone failed. Your file is analysed in
+       your browser and never uploaded anywhere.</p>
+    <p class="site-note">Statistics can only be gathered when a player can be seen.</p>
+  </header>
+
+  <main>
+    <section id="drop-zone" class="drop-zone" tabindex="0" role="button"
+             aria-label="Choose a demo file">
+      <p class="drop-title">Drop a .demo file here</p>
+      <p class="drop-sub">or click to choose one</p>
+      <input id="file-input" type="file" accept=".demo" hidden>
+    </section>
+
+    <section id="progress" class="progress" hidden>
+      <p id="progress-label">Analysing…</p>
+      <div class="bar"><div id="progress-bar" class="bar-fill"></div></div>
+    </section>
+
+    <p id="error" class="error" role="alert" hidden></p>
+
+    <div id="results" hidden>
+      <section class="summary" id="summary"></section>
+
+      <section class="replay-bar">
+        <div>
+          <h2>Watch replay</h2>
+          <p>Play this demo in the real DDNet client, exactly like
+             <a href="https://ddnet.org/watch/" target="_blank" rel="noreferrer noopener">ddnet.org/watch</a>.
+             The client is about 51&nbsp;MB and is downloaded once, the first time
+             you press play; analysing another demo reuses it.
+             “New tab” keeps these statistics visible while the replay runs.</p>
+        </div>
+        <div class="replay-actions">
+          <button id="watch-replay" class="watch-replay" type="button">▶ Watch replay</button>
+          <button id="watch-replay-tab" class="watch-replay secondary" type="button"
+                  title="Play the replay in a separate tab, next to these statistics"
+                  aria-label="Open the replay in a new tab">↗ New tab</button>
+        </div>
+      </section>
+
+      <section class="controls">
+        <label>
+          A fail is a freeze longer than
+          <input id="threshold" type="number" min="0" max="60" step="0.1" value="1"> seconds
+        </label>
+        <label class="check">
+          <input id="include-deep" type="checkbox" checked> count deep freeze
+        </label>
+        <label>
+          A save is successful when the saved lives longer than
+          <input id="save-threshold" type="number" min="0" max="60" step="0.1" value="2"> seconds
+        </label>
+      </section>
+
+      <section>
+        <h2 id="stats-heading">Fails per player</h2>
+        <div id="team-tabs" class="tabs" role="tablist" aria-label="Teams" hidden></div>
+        <div id="team0-bar" class="tabs team0-bar" hidden>
+          <button id="team0-toggle" class="tab" type="button" aria-pressed="false">Include team 0</button>
+        </div>
+        <div class="table-wrap" id="stats-wrap">
+          <table id="stats-table">
+            <thead>
+              <tr>
+                <th data-sort="name">Player</th>
+                <th data-sort="fails" class="num">Fails</th>
+                <th data-sort="saves" class="num">Saves</th>
+                <th data-sort="last" class="num" data-tip="Times you were the only one not in freeze">Last</th>
+                <th data-sort="longest" class="num" data-tip="Longest single time in freeze">Longest</th>
+                <th data-sort="median" class="num" data-tip="Median time in freeze per fail (one very long fail cannot skew it)">Median</th>
+                <th data-sort="total" class="num" data-tip="Total time in freeze throughout the entire demo">Total</th>
+              </tr>
+            </thead>
+            <tbody id="stats-body"></tbody>
+          </table>
+        </div>
+        <p class="hint" id="stats-hint">Click a column to sort, click a player for details.</p>
+      </section>
+
+      <section id="detail" hidden>
+        <h2 id="detail-title"></h2>
+        <div class="detail-grid">
+          <div>
+            <div class="tabs chart-head">
+              <button id="detail-zoom" class="tab" type="button" aria-pressed="false">View detailed</button>
+            </div>
+            <div id="timeline"></div>
+            <h3>When you were the last one not in freeze</h3>
+            <div id="last-timeline"></div>
+          </div>
+          <div>
+            <h3>Every fail</h3>
+            <div class="fail-list-wrap">
+              <table id="fail-list">
+                <thead><tr><th class="num">#</th><th>Time in demo</th><th class="num">Duration</th><th>Replay</th></tr></thead>
+                <tbody id="fail-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="unfrozen">
+        <h2>Time alive</h2>
+        <div class="table-wrap">
+          <table id="unfrozen-table">
+            <thead>
+              <tr>
+                <th data-sort="name">Player</th>
+                <th data-sort="longest" class="num" data-tip="Longest continuous time alive">Longest</th>
+                <th data-sort="median" class="num" data-tip="Median time alive between freezes (one long wait cannot skew it)">Median</th>
+                <th data-sort="total" class="num" data-tip="Total time alive throughout the entire demo">Total</th>
+              </tr>
+            </thead>
+            <tbody id="unfrozen-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="alive-detail" hidden>
+        <h2 id="alive-detail-title"></h2>
+        <div class="tabs chart-head">
+          <button id="alive-zoom" class="tab" type="button" aria-pressed="false">View detailed</button>
+        </div>
+        <div id="alive-timeline"></div>
+      </section>
+
+      <section id="heatmap" hidden>
+        <h2>Where the team struggled</h2>
+        <p id="heat-unavailable" class="hint" hidden></p>
+        <div id="heat-body">
+          <div class="heat-controls">
+            <div class="tabs" id="heat-modes" role="group" aria-label="Heat layer">
+              <button class="tab" type="button" data-mode="freeze" aria-pressed="true">Frozen</button>
+              <button class="tab" type="button" data-mode="time" aria-pressed="false">Time spent</button>
+            </div>
+            <span class="heat-label">Area</span>
+            <div class="tabs" id="heat-chunks" role="group" aria-label="Area size in tiles">
+              <button class="tab" type="button" data-chunk="3">3 × 3</button>
+              <button class="tab" type="button" data-chunk="6" aria-pressed="true">6 × 6</button>
+              <button class="tab" type="button" data-chunk="12">12 × 12</button>
+            </div>
+            <span class="hint" id="heat-note"></span>
+            <button id="heat-reset" class="tab heat-reset" type="button"
+                    title="Show the whole map again">Reset view</button>
+          </div>
+          <div id="heat-players" class="tabs heat-players" role="group" aria-label="Players in the heatmap"></div>
+          <div class="heat-grid">
+            <div>
+              <div class="heat-map-wrap">
+                <canvas id="heat-canvas" aria-label="Heatmap of this team on the map"></canvas>
+              </div>
+              <div class="heat-legend">
+                <span>less</span><div class="bar"></div><span id="heat-legend-max" class="num">0 s</span>
+              </div>
+              <p class="hint heat-cursor" id="heat-cursor">Scroll to zoom, drag to move, double-click to reset.</p>
+            </div>
+            <div class="heat-side">
+              <h3>Chokepoints</h3>
+              <div class="table-wrap">
+                <table id="heat-table">
+                  <thead>
+                    <tr>
+                      <th class="num">#</th>
+                      <th>Spot</th>
+                      <th class="num" id="heat-top-unit">Frozen</th>
+                      <th>Players</th>
+                    </tr>
+                  </thead>
+                  <tbody id="heat-top-body"></tbody>
+                </table>
+              </div>
+              <p class="hint">Hover to outline a spot, click to zoom to it.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Who saved whom</h2>
+        <div id="saves-tabs" class="tabs" role="tablist" aria-label="Saviors" hidden></div>
+        <div class="table-wrap">
+          <table id="saves-table">
+            <thead>
+              <tr>
+                <th>Saved</th>
+                <th class="num">Saves</th>
+              </tr>
+            </thead>
+            <tbody id="saves-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="replay-overlay" class="replay-overlay" hidden>
+    <div id="replay-stage" class="replay-stage"></div>
+    <p id="replay-error" class="replay-error" role="alert" hidden></p>
+  </div>
+
+  <footer>
+    Not affiliated with DDNet. Statistics are computed from what the recording client received.
+    Replay runs the <a href="https://github.com/ddnet/ddnet" target="_blank" rel="noreferrer noopener">DDNet client</a>
+    (zlib licence) with its game assets (<a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noreferrer noopener">CC BY-SA 3.0</a>).
+  </footer>
+
+  <script src="js/app.js?v=20261029n"></script>
+</body>
+</html>

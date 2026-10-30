@@ -1,0 +1,31 @@
+features:
+- time survived (total, average, maximum) ☑️
+- updowns zu safe statistic hinzufügen ☑️
+- average position
+- times last ☑️
+- team stats
+	- check fails from all players and find common chokepoints ☑️
+	- find points where a team was stuck on for a while ☑️
+- Used as Tower: sometimes players take a break on top another player by aligning their x-axis to be the same with a margin of error of 0.03 and then one player stands on top of another. the player on the bottom shouldn't get a fail count if they are towering since the bottom player intentionally went into the freeze
+- 
+
+funny:
+- first one to clear solo
+- aled statistic
+- times dj used
+- missed hooks (only count missed hooks when you have 1 or 0 jumps, not 2)
+- times emoted
+- chatter tierlist
+- troll / adhs - hammer while someone is alive
+
+
+bugs:
+- spec -> unspec gibt einen extra fail (☑️)
+- wenn aus freeze gedragged wird gibt einen extra fail (☑️)
+- replay kann man noch nicht gescheit durchskipen ☑️
+
+
+- detail view slider für %
+- median version (☑️)
+- undo last cooldown ☑️
+- ddrace network website kann replay im browser anzeigen. (anschauen ob man das klauen kann)☑️

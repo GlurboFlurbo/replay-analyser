@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DDNet replay</title>
+  <link rel="stylesheet" href="replay.css?v=20261029h">
+</head>
+<body>
+  <canvas id="canvas">Your browser does not support the canvas element.</canvas>
+
+  <div id="loading" class="loading">
+    <div class="loading-box">
+      <p id="loading-title">Downloading the DDNet client…</p>
+      <div class="loading-bar"><div id="loading-fill"></div></div>
+      <p id="loading-hint">About 51 MB on the first visit, then it is cached. The client is
+        the same one the official <a href="https://ddnet.org/watch/" target="_blank" rel="noreferrer">ddnet.org/watch</a>
+        page uses.</p>
+    </div>
+  </div>
+
+  <div id="error" class="error" hidden></div>
+
+  <div id="bar" class="bar" hidden>
+    <div id="demo-title" class="demo-title"></div>
+    <div class="row">
+      <div class="group playback">
+        <button id="back" type="button" title="Back 10 seconds (←)">−10s</button>
+        <button id="play" type="button" title="Play / pause (Space)">▶</button>
+        <button id="forward" type="button" title="Forward 10 seconds (→)">+10s</button>
+      </div>
+      <div class="group">
+        <span class="stepper">
+          <button id="speed-down" type="button" title="Slower (↓)">−</button>
+          <span id="speed-value" title="Playback speed (click for 1×)">3×</span>
+          <button id="speed-up" type="button" title="Faster (↑)">+</button>
+        </span>
+        <span class="stepper">
+          <button id="zoom-out" type="button" title="Zoom out (-)">−</button>
+          <button id="zoom-reset" type="button" title="Reset zoom (#)">⌕</button>
+          <button id="zoom-in" type="button" title="Zoom in (+)">+</button>
+        </span>
+      </div>
+      <div class="group">
+        <button id="entities" class="toggle" type="button" title="Show entities (E)">▦</button>
+        <button id="keys" class="toggle on" type="button" title="Show key presses (K)">→</button>
+        <button id="close" class="close" type="button" title="Close replay (Esc)">✕</button>
+      </div>
+    </div>
+    <div class="seek-row">
+      <span id="time-now">0:00</span>
+      <input id="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Replay position">
+      <span id="time-end">0:00</span>
+    </div>
+  </div>
+
+  <script src="replay.js?v=20261029h"></script>
+</body>
+</html>
+

@@ -1,0 +1,6 @@
+# Local test demos (~216 MB, not part of the site)
+Examples/
+
+# OS/editor junk
+Thumbs.db
+.DS_Store
