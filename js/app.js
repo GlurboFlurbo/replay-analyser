@@ -1068,13 +1068,50 @@
     box.hidden = false;
   }
 
+  /**
+   * Keeps the fun-page data of the last analysed demo for this tab, so the
+   * "Fun stats" link can show the same demo without asking for the file again.
+   * sessionStorage survives navigation and disappears when the tab is closed;
+   * only the small count arrays are stored, never the demo bytes.
+   */
+  const FUN_CACHE_KEY = 'dda:lastFun';
+  function rememberFun(result, name) {
+    if (!result.fun) return;
+    try {
+      sessionStorage.setItem(FUN_CACHE_KEY, JSON.stringify({ name, header: result.header, fun: result.fun }));
+    } catch (e) {
+      // Private mode or a full quota: the fun page simply asks for the file.
+    }
+  }
+
+  /** Puts a worker result on screen, whether it is fresh or restored from the cache. */
+  function applyResult(result) {
+    state.result = result;
+    state.selected = null;
+    state.aliveSelected = null;
+    state.team = null;
+    // Demos without any recorded team state (older 0.6 recordings, some
+    // tournament clients) would otherwise show "Players 0" and no table at
+    // all. Everyone recorded is then the only sensible group.
+    state.team0 = !result.teamsRecorded;
+    state.savior = null;
+    state.heat.player = null;
+    heatView.fitted = false;
+    heatView.pin = null;
+    heatView.hover = null;
+    heatView.data = null;
+    renderAll();
+  }
+
   async function handleFile(file) {
     $('error').hidden = true;
     $('results').hidden = true;
     if (!file) return;
     if (!/\.demo$/i.test(file.name)) return showError('Please choose a .demo file.');
     if (file.size > 500 * 1024 * 1024) return showError('That file is larger than 500 MB.');
-
+    try { sessionStorage.removeItem(FUN_CACHE_KEY); } catch (e) { /* ignore */ }
+    $('restore-note').hidden = true;
+    DDA.DemoCache.clear(); // the previous demo's cached result is obsolete now
     destroyReplay(); // a different demo makes the running client useless
     state.file = file;
 
@@ -1085,29 +1122,18 @@
     let buffer;
     try { buffer = await file.arrayBuffer(); } catch (e) { return showError('Could not read the file.'); }
 
-    const worker = new Worker('js/worker.js?v=20261029n');
+    const worker = new Worker('js/worker.js?v=20261110i');
     worker.onmessage = (event) => {
       const msg = event.data;
       if (msg.type === 'progress') {
         $('progress-bar').style.width = (msg.fraction * 100).toFixed(0) + '%';
       } else if (msg.type === 'done') {
         worker.terminate();
-        state.result = msg;
-        state.selected = null;
-        state.aliveSelected = null;
-        state.team = null;
-        // Demos without any recorded team state (older 0.6 recordings, some
-        // tournament clients) would otherwise show "Players 0" and no table at
-        // all. Everyone recorded is then the only sensible group.
-        state.team0 = !msg.teamsRecorded;
-        state.savior = null;
-        state.heat.player = null;
-        heatView.fitted = false;
-        heatView.pin = null;
-        heatView.hover = null;
-        heatView.data = null;
+        rememberFun(msg, file.name);
         $('progress').hidden = true;
-        renderAll();
+        applyResult(msg);
+        // Background write; the page never waits for it.
+        DDA.DemoCache.save(msg, file);
       } else if (msg.type === 'error') {
         worker.terminate();
         showError(msg.message);
@@ -1264,7 +1290,11 @@
 
   /** Opens the player, optionally jumping to an absolute tick (e.g. just before a fail). */
   function openReplay(tick, where = replay.mode) {
-    if (!state.file || !state.result) return;
+    if (!state.result) return;
+    if (!state.file) {
+      showReplayError('The demo file is no longer loaded. Drop it again to use the replay.');
+      return;
+    }
     $('replay-error').hidden = true;
     const target = Number.isFinite(tick) ? tick : null;
     if (where === 'tab') {
@@ -1480,6 +1510,29 @@
     state.unfSortKey = key;
     if (state.result) renderUnfrozen();
   }));
+
+  // Reloaded or came back from the fun page? Show this tab's last analysis again.
+  (async () => {
+    try {
+      const saved = await DDA.DemoCache.load();
+      if (!saved || !saved.result || state.result) return;
+      if (saved.file) {
+        state.file = saved.file instanceof File
+          ? saved.file
+          : new File([saved.file], saved.name, { lastModified: saved.lastModified });
+      }
+      applyResult(saved.result);
+      rememberFun(saved.result, saved.name);
+      const note = $('restore-note');
+      note.hidden = false;
+      note.textContent = `Restored ${saved.name} from this tab's last analysis. ` +
+        (saved.file
+          ? 'Drop another .demo file to replace it.'
+          : 'The file itself was too large to keep, so the replay needs it again.');
+    } catch (e) {
+      // No cache or storage unavailable: the normal drop zone is all we need.
+    }
+  })();
 
   // Exposed only so the logic can be smoke-tested without a browser.
   window.__ddaTest = { state, renderAll };

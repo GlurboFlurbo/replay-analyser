@@ -7,7 +7,7 @@
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'none'; script-src 'self'; style-src 'self'; worker-src 'self'; connect-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'none'">
   <title>DDNet Demo Analyzer</title>
-  <link rel="stylesheet" href="css/style.css?v=20261029n">
+  <link rel="stylesheet" href="css/style.css?v=20261110i">
   <!-- Static hosts cannot send COOP/COEP headers. This worker adds them, which the
        threaded WebAssembly client needs for SharedArrayBuffer. It reloads the page
        once on the very first visit, and does nothing when the headers are present. -->
@@ -19,6 +19,7 @@
     <p>Drop a <code>.demo</code> file to see how often everyone failed. Your file is analysed in
        your browser and never uploaded anywhere.</p>
     <p class="site-note">Statistics can only be gathered when a player can be seen.</p>
+    <p class="site-links"><a href="fun.html">Fun stats →</a></p>
   </header>
 
   <main>
@@ -28,6 +29,8 @@
       <p class="drop-sub">or click to choose one</p>
       <input id="file-input" type="file" accept=".demo" hidden>
     </section>
+
+    <p id="restore-note" class="hint" hidden></p>
 
     <section id="progress" class="progress" hidden>
       <p id="progress-label">Analysing…</p>
@@ -223,6 +226,7 @@
     (zlib licence) with its game assets (<a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noreferrer noopener">CC BY-SA 3.0</a>).
   </footer>
 
-  <script src="js/app.js?v=20261029n"></script>
+  <script src="js/demo-cache.js?v=20261110i"></script>
+  <script src="js/app.js?v=20261110i"></script>
 </body>
 </html>

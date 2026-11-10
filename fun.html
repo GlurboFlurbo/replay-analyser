@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; worker-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>DDNet Demo Fun Stats</title>
+  <link rel="stylesheet" href="css/style.css?v=20261110i">
+</head>
+<body>
+  <header class="site-header">
+    <h1>DDNet Demo Fun Stats</h1>
+    <p>Experimental extras that do not belong in serious analysis.
+       <a href="./">← Back to the analyzer</a></p>
+    <p class="site-note">Your file is analysed in your browser and never uploaded anywhere.</p>
+  </header>
+
+  <main>
+    <section id="drop-zone" class="drop-zone" tabindex="0" role="button"
+             aria-label="Choose a demo file">
+      <p class="drop-title">Drop a .demo file here</p>
+      <p class="drop-sub">or click to choose one</p>
+      <input id="file-input" type="file" accept=".demo" hidden>
+    </section>
+
+    <p id="carry-note" class="hint" hidden></p>
+
+    <section id="progress" class="progress" hidden>
+      <p id="progress-label">Analysing …</p>
+      <div class="bar"><div id="progress-bar" class="bar-fill"></div></div>
+    </section>
+
+    <p id="error" class="error" role="alert" hidden></p>
+
+    <div id="results" hidden>
+      <section class="summary" id="summary"></section>
+
+      <section>
+        <h2>Double jumps</h2>
+        <p class="hint">An air jump (the second jump); the first jump from the ground is not
+           counted. Jumps after simply walking off a ledge are. On maps that allow extra jumps,
+           every air jump counts. Per 10 min uses the time each player was visible in the
+           recording.</p>
+        <p id="jumps-unavailable" class="hint" hidden></p>
+        <div class="table-wrap" id="jumps-wrap">
+          <table id="jumps-table">
+            <thead>
+              <tr>
+                <th class="num">#</th>
+                <th>Player</th>
+                <th class="num">Double jumps</th>
+                <th class="num">Per 10 min</th>
+                <th class="num">Share</th>
+              </tr>
+            </thead>
+            <tbody id="jumps-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>Emotes</h2>
+        <p class="hint">Every emote bubble the recording client received, by type. Players whose
+           character was never in view can still appear here, because emotes are broadcast to the
+           whole server. Click a column header to sort by that emote. With default DDNet spam
+           protection, emotes repeated within three seconds are only sent to nearby players, so
+           far-away spam can be missing.</p>
+        <p id="emotes-note" class="hint" hidden></p>
+        <div class="table-wrap" id="emotes-wrap">
+          <table id="emotes-table">
+            <thead>
+              <tr id="emotes-head"></tr>
+            </thead>
+            <tbody id="emotes-body"></tbody>
+            <tfoot id="emotes-foot"></tfoot>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    Not affiliated with DDNet. Fun stats are computed from what the recording client received.
+    <a href="./">Back to the analyzer</a>
+  </footer>
+
+  <script src="js/fun.js?v=20261110i"></script>
+</body>
+</html>

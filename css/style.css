@@ -25,6 +25,11 @@ main, .site-header, footer { max-width: 1000px; margin: 0 auto; padding: 0 1rem;
 .site-header h1 { margin: 0 0 .25rem; }
 .site-header p { margin: 0 0 1.5rem; color: var(--muted); }
 .site-header .site-note { color: var(--text); font-weight: 600; }
+.site-header a { color: var(--accent); }
+.site-links { margin: -.75rem 0 1.5rem; font-size: .9rem; }
+.site-links a { display: inline-block; border: 1px solid var(--border); border-radius: 999px;
+  padding: .25rem .8rem; color: var(--muted); text-decoration: none; }
+.site-links a:hover, .site-links a:focus-visible { border-color: var(--accent); color: var(--text); }
 h2 { margin: 2rem 0 .75rem; font-size: 1.25rem; }
 h3 { margin: 1.25rem 0 .5rem; font-size: .95rem; color: var(--muted); font-weight: 600; }
 code { background: var(--panel-2); padding: .1em .35em; border-radius: 4px; }
@@ -147,6 +152,38 @@ tbody tr:last-child td { border-bottom: 0; }
 #heat-table tbody tr { cursor: pointer; }
 #heat-table tbody tr:hover { background: var(--accent-soft); }
 .heat-people { white-space: normal; font-size: .85rem; color: var(--muted); }
+
+/* ---------- fun page ---------- */
+#jumps-table td { vertical-align: middle; }
+#jumps-table .jumps-cell { min-width: 8rem; }
+#jumps-table tbody tr:hover { background: var(--accent-soft); }
+
+#emotes-wrap { max-height: 34rem; overflow: auto; }
+#emotes-table th, #emotes-table td { padding: .4rem .45rem; }
+#emotes-table th.sortable { cursor: pointer; user-select: none; }
+#emotes-table th.sortable:hover { color: var(--text); }
+#emotes-table th.sorted::after { content: " ▼"; font-size: .6rem; }
+#emotes-table th.sorted.asc::after { content: " ▲"; }
+#emotes-table th.emote-col, #emotes-table td.emote-col { text-align: center; font-variant-numeric: tabular-nums; }
+#emotes-table .emote-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.75rem; min-height: 1.75rem;
+  font-size: .62rem; letter-spacing: 0; line-height: 1.1;
+}
+#emotes-table .emote-icon img { display: block; width: 1.75rem; height: 1.75rem; object-fit: contain; }
+#emotes-table td.zero { color: var(--muted); opacity: .55; }
+#emotes-table tbody tr:hover { background: var(--accent-soft); }
+/* Keep the player name visible while the 16 emote columns scroll sideways. */
+#emotes-table th:first-child, #emotes-table td:first-child {
+  position: sticky; left: 0; z-index: 1; background: var(--panel);
+}
+#emotes-table th:first-child { background: var(--panel-2); z-index: 3; }
+#emotes-table tbody tr:hover td:first-child { background: var(--accent-soft); }
+#emotes-table tfoot td {
+  font-weight: 600; background: var(--panel-2);
+  border-top: 2px solid var(--border); border-bottom: 0;
+}
+#emotes-table tfoot td:first-child { background: var(--panel-2); }
 
 footer { color: var(--muted); font-size: .8rem; padding-top: 3rem; padding-bottom: 2rem; }
 footer a, .replay-bar a { color: inherit; }
