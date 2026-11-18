@@ -1,0 +1,37 @@
+/* Theme 1 — Frostbite
+   Load AFTER style.css:  <link rel="stylesheet" href="css/theme-frostbite.css?v=1">
+   Ice-blue, light by default, dark in dark mode. Faceted corners, light-weight display type. */
+:root{color-scheme:light;--bg:#e6eff6;--panel:#f7fbfe;--panel-2:#d9e6f0;--text:#0e2236;--muted:#52697e;--accent:#1f5fe0;--accent-soft:rgba(31,95,224,.14);--danger:#d1365a;--border:#c3d6e4;--on-accent:#fff;--facet:3px 20px 3px 20px;--rim:inset 0 1px 0 #fff}
+@media(prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#07182b;--panel:#0d2640;--panel-2:#143456;--text:#e4f1fb;--muted:#8aa8c2;--accent:#5ab8ff;--accent-soft:rgba(90,184,255,.2);--danger:#ff7a93;--border:#1d4266;--on-accent:#04182b;--rim:inset 0 1px 0 rgba(255,255,255,.08)}}
+
+body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main,.site-header,footer{max-width:1120px;padding-left:1.5rem;padding-right:1.5rem}
+.site-header{padding-top:3.25rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.site-header h1{font-size:clamp(2.4rem,6vw,4.2rem);font-weight:300;letter-spacing:-.045em;line-height:1;margin-bottom:.9rem}
+.site-header p{font-size:1.05rem;max-width:44rem}
+.site-header .site-note{font-size:.9rem;font-weight:500;color:var(--accent)}
+.site-links a{border-radius:var(--facet);border-color:var(--accent);color:var(--accent)}
+.site-links a:hover,.site-links a:focus-visible{background:var(--accent);color:var(--on-accent)}
+
+h2{font-size:1.5rem;font-weight:400;letter-spacing:-.02em;margin:2.75rem 0 .9rem}
+h3{color:var(--text);font-weight:600}
+
+.card,.award,.controls,.table-wrap,.fail-list-wrap,.replay-bar,.drop-zone{border-radius:var(--facet);box-shadow:var(--rim)}
+.card{padding:.8rem 1.25rem}
+.card .label{text-transform:none;letter-spacing:0;font-size:.8rem}
+.card .value{font-size:1.55rem;font-weight:300;letter-spacing:-.02em}
+.drop-zone{padding:4.5rem 1rem;border-width:1.5px}
+.drop-title{font-size:1.6rem;font-weight:300;letter-spacing:-.02em}
+
+th{text-transform:none;letter-spacing:0;font-size:.82rem;font-weight:600}
+th,td{padding:.6rem .85rem}
+
+.tabs .tab,.heat-reset{border-radius:var(--facet)}
+.tabs .tab[aria-selected="true"]{color:var(--on-accent)}
+.watch-replay{border-radius:var(--facet);color:var(--on-accent)}
+.watch-replay.secondary{color:var(--text)}
+.replay-btn:hover,.replay-btn:focus-visible{color:var(--on-accent)}
+.bar,.bar-fill{border-radius:0 6px 0 6px}
+.error{border-radius:var(--facet)}
+#timeline svg,#last-timeline svg,#alive-timeline svg{border-radius:var(--facet)}
+.heat-map-wrap{border-radius:var(--facet)}

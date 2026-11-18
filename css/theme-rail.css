@@ -1,0 +1,53 @@
+/* Theme 3 — Rail
+   Load AFTER style.css:  <link rel="stylesheet" href="css/theme-rail.css?v=1">
+   Changes the layout: the header becomes a fixed left rail, results fill the right side.
+   Tile-grid backdrop (maps are tile-based), pixel-stepped corners. Dark only. */
+:root{color-scheme:dark;--bg:#171329;--panel:#221c3b;--panel-2:#2d2650;--text:#efeaff;--muted:#a399c9;--accent:#ff5d8f;--accent-soft:rgba(255,93,143,.2);--danger:#ff8a5c;--border:#3a3166;--mint:#5ef2c6;--on-accent:#1b0f1e;
+  --px:polygon(0 4px,4px 4px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px))}
+
+body{display:grid;grid-template-columns:clamp(15rem,22vw,19rem) minmax(0,1fr);min-height:100vh;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background-color:var(--bg);background-image:linear-gradient(rgba(163,153,201,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(163,153,201,.07) 1px,transparent 1px);background-size:28px 28px}
+.site-header{position:sticky;top:0;align-self:start;height:100vh;max-width:none;margin:0;padding:2.25rem 1.5rem;background:var(--panel);border-right:2px solid var(--border);overflow:auto}
+.site-header h1{font-size:2.4rem;line-height:1;font-weight:800;letter-spacing:-.04em;margin:0 0 1.1rem;overflow-wrap:anywhere}
+.site-header p{font-size:.9rem;margin:0 0 1rem}
+.site-header a{color:var(--mint)}
+.site-header .site-note{font-size:.85rem;font-weight:500;color:var(--mint);border-left:3px solid var(--mint);padding-left:.7rem}
+.site-links{margin:0 0 1rem}
+.site-links a{border:2px solid var(--mint);border-radius:0;color:var(--mint);font-weight:700;padding:.3rem .8rem}
+.site-links a:hover,.site-links a:focus-visible{background:var(--mint);color:var(--on-accent)}
+main{width:100%;max-width:1100px;margin:0 auto;padding:2.25rem 2rem 0}
+footer{grid-column:2;width:100%;max-width:1100px;margin:0 auto;padding:3rem 2rem 2rem}
+
+h2{display:flex;align-items:center;gap:.8rem;font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
+h2::after{content:"";flex:1;height:2px;background:var(--border)}
+.replay-bar h2::after{display:none}
+h3{color:var(--text)}
+
+.card,.award,.controls,.replay-bar,.drop-zone,.table-wrap,.fail-list-wrap{border-width:2px;border-radius:0;clip-path:var(--px)}
+.card{background:var(--panel-2)}
+.card .label{text-transform:none;letter-spacing:0;font-size:.8rem}
+.card .value{font-size:1.5rem;font-weight:800;color:var(--mint)}
+.drop-zone{padding:3.5rem 1rem}
+.drop-zone:hover,.drop-zone:focus-visible,.drop-zone.dragging{border-color:var(--mint)}
+.drop-title{font-size:1.5rem;font-weight:800}
+
+th{text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--mint)}
+.tabs .tab,.heat-reset,.watch-replay,.replay-btn{border-radius:0}
+.tabs .tab{border-width:2px}
+.tabs .tab:hover{border-color:var(--mint)}
+.tabs .tab[aria-selected="true"]{color:var(--on-accent)}
+.watch-replay{color:var(--on-accent);font-weight:800}
+.watch-replay.secondary{color:var(--text)}
+.replay-btn:hover,.replay-btn:focus-visible{color:var(--on-accent)}
+
+.bar,.bar-fill{border-radius:0}
+.bar-fill{background:repeating-linear-gradient(90deg,var(--mint) 0 8px,transparent 8px 10px)}
+.error{border-radius:0;border-width:2px}
+#timeline svg,#last-timeline svg,#alive-timeline svg,.heat-map-wrap{border-radius:0;border-width:2px}
+
+@media(max-width:900px){
+  body{display:block}
+  .site-header{position:static;height:auto;border-right:0;border-bottom:2px solid var(--border)}
+  main{padding:1.5rem 1rem 0}
+  footer{padding:2rem 1rem}
+}
