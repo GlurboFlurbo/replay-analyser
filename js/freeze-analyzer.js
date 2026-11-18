@@ -37,7 +37,7 @@
 (function (g) {
   const DDA = (g.DDA = g.DDA || {});
 
-  const MAX_CLIENTS = 64;
+  const MAX_CLIENTS = 128;
   const DDNET_CHAR_FLAGS = 0;
   const DDNET_CHAR_FREEZE_END = 1;
   const FLAG_MOVEMENTS_DISABLED = 1 << 20; // "live freeze"

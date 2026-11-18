@@ -151,7 +151,7 @@
     let buffer;
     try { buffer = await file.arrayBuffer(); } catch (e) { return showError('Could not read the file.'); }
 
-    worker = new Worker('js/worker.js?v=20261110i');
+    worker = new Worker('js/worker.js?v=20261118a');
     worker.onmessage = (event) => {
       const msg = event.data;
       if (msg.type === 'progress') {

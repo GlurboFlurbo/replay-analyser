@@ -21,7 +21,7 @@
 (function (g) {
   const DDA = (g.DDA = g.DDA || {});
 
-  const MAX_CLIENTS = 64;
+  const MAX_CLIENTS = 128;
   const SV_EMOTICON = 10;
 
   // Same order as the DDNet protocol enum (datasrc/network.py, Emoticons).
@@ -61,7 +61,7 @@
       for (let cid = 0; cid < MAX_CLIENTS; cid++) {
         const info = snap.get(DDA.TYPE_CLIENT_INFO, cid);
         // ClientInfo keeps the same array until it changes, so decoding it on every
-        // snapshot would be pure waste (and this runs for all 64 slots each time).
+        // snapshot would be pure waste (and this runs for all 128 slots each time).
         if (info && info !== this.infoRefs[cid]) {
           this.infoRefs[cid] = info;
           this.names[cid] = intsToString(info, 0, 4);

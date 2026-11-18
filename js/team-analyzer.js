@@ -23,7 +23,7 @@
     constructor() {
       this.names = new Array(MAX_CLIENTS).fill(null);
       this.slotTeam = new Array(MAX_CLIENTS).fill(0);
-      this.everTeam = new Map(); // player name -> highest team number seen
+      this.everTeam = new Map(); // player name -> most recent team number seen
       this.recorded = false;     // true once at least one Sv_TeamsState arrived
     }
 
@@ -52,9 +52,10 @@
 
     _fold(cid) {
       const team = this.slotTeam[cid], name = this.names[cid];
-      if (team > 0 && name && (this.everTeam.get(name) || 0) < team) {
-        this.everTeam.set(name, team);
-      }
+      // Most recent positive team wins: players shuffle teams during a run, and
+      // keeping the highest number ever seen would let a 4-second detour outrank
+      // a 3-hour stay (that bug reported champloo as team 185 instead of 12).
+      if (team > 0 && name) this.everTeam.set(name, team);
     }
 
     /** Plain data (structured-clone friendly) for the UI. */

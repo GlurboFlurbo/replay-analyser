@@ -28,7 +28,7 @@
 (function (g) {
   const DDA = (g.DDA = g.DDA || {});
 
-  const MAX_CLIENTS = 64;
+  const MAX_CLIENTS = 128;
   const HAMMER_EVENT = 16;        // event item: [impactX, impactY]
   const HAMMER_GRACE = 5;         // the freeze must end within this many ticks of the hit
   const HAMMER_RANGE = 120;       // max distance from the impact to victim and saviour

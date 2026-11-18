@@ -15,7 +15,7 @@
 (function (g) {
   const DDA = (g.DDA = g.DDA || {});
 
-  const MAX_CLIENTS = 64;
+  const MAX_CLIENTS = 128;
   // "character@netobj.ddnet.tw", the same extension freeze-analyzer.js uses.
   const DDNET_CHARACTER_UUID = [1993229659, -102024632, -1378361269, -1810037668];
   const CHAR_JUMPED_TOTAL = 5; // field index in DDNetCharacter
@@ -61,7 +61,7 @@
       for (let cid = 0; cid < MAX_CLIENTS; cid++) {
         const info = snap.get(DDA.TYPE_CLIENT_INFO, cid);
         // ClientInfo keeps the same array until it changes, so decoding every snapshot
-        // would be waste; this loop already runs 64 times per snapshot.
+        // would be waste; this loop already runs 128 times per snapshot.
         if (info && info !== this.infoRefs[cid]) {
           this.infoRefs[cid] = info;
           this.names[cid] = intsToString(info, 0, 4);

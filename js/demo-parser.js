@@ -30,16 +30,32 @@
     return utf8.decode(bytes.subarray(off, off + len));
   }
 
+  /*
+   * DDNet's CVariableInt::Unpack (src/engine/shared/compression.cpp) - NOT standard
+   * LEB128. The first byte carries the low 6 bits and the sign (bit 6); each
+   * continuation byte adds 7 bits with masks [0x7f,0x7f,0x7f,0x7f->0x0f] at shifts
+   * [6,13,20,27]; a negative value is stored as its bitwise NOT. The same scheme is
+   * used by huffman.js varIntDecompress. Getting this wrong only shows up for
+   * values >= 64, which silently corrupts message ints (e.g. Sv_TeamsState teams).
+   */
+  const VARINT_MASKS = [0x7f, 0x7f, 0x7f, 0x0f];
+  const VARINT_SHIFTS = [6, 13, 20, 27];
+
   /** Reads one varint at `p`; returns {v, p} (value, position after) or null when truncated. */
   function readVarint(bytes, p) {
-    let v = 0, shift = 0;
-    for (let k = 0; k < 5 && p < bytes.length; k++) {
-      const b = bytes[p++];
-      v |= (b & 0x7f) << shift;
-      shift += 7;
-      if (!(b & 0x80)) return { v: v | 0, p };
+    if (p >= bytes.length) return null;
+    let b = bytes[p];
+    const sign = (b >> 6) & 1;
+    let v = b & 0x3f;
+    for (let k = 0; k < 4; k++) {
+      if (!(b & 0x80)) break;
+      p++;
+      if (p >= bytes.length) return null;
+      b = bytes[p];
+      v |= (b & VARINT_MASKS[k]) << VARINT_SHIFTS[k];
     }
-    return null;
+    p++;
+    return { v: (v ^ -sign) | 0, p };
   }
 
   function readVarints(bytes, from) {

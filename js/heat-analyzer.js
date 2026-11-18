@@ -22,7 +22,7 @@
 (function (g) {
   const DDA = (g.DDA = g.DDA || {});
 
-  const MAX_CLIENTS = 64;
+  const MAX_CLIENTS = 128;
   const TILE = 32;    // character x/y are in pixels, 32 per tile
   const SAMPLE = 5;   // ticks between samples (10 Hz)
 

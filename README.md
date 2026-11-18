@@ -22,12 +22,12 @@ reloads the page once on the first visit.
 | js/app.js | file input, tables, charts (UI only) |
 | js/demo-cache.js | keeps the last analysis (and the demo file, up to 100 MB) in IndexedDB so the same tab can restore it |
 | js/worker.js | background thread: runs the parser so the page never freezes |
-| js/demo-parser.js | header + chunk reader (snapshots and messages) |
+| js/demo-parser.js | header + chunk reader (snapshots and messages); decodes DDNet's varint (6-bit first byte, not standard LEB128) |
 | js/huffman.js | Huffman + varint decompression |
 | js/snapshot.js | full snapshots and deltas |
 | js/freeze-analyzer.js | collects every freeze run per player, plus first/last tick seen (for time alive) |
 | js/save-analyzer.js | collects candidate saves (hammer frees + long hook holds + updown re-grabs) |
-| js/team-analyzer.js | reads Sv_TeamsState messages: which players were in a team |
+| js/team-analyzer.js | reads Sv_TeamsState messages: which players were in a team (all 128 slots, most recent team wins) |
 | js/map-reader.js | unpacks the map embedded in the demo: size + game tile grid (for the heatmap background) |
 | js/heat-analyzer.js | counts, per player, how long they spent on each map tile and how much of it frozen; the UI sums those tiles into selectable N×N areas |
 | js/jump-analyzer.js | counts air jumps (double jumps) per player from the server's jump counter |

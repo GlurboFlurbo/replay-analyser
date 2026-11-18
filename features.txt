@@ -20,6 +20,8 @@ bugs:
 - spec -> unspec gibt einen extra fail (☑️)
 - wenn aus freeze gedragged wird gibt einen extra fail (☑️)
 - replay kann man noch nicht gescheit durchskipen ☑️
+- in 128 player octagores sind Kyube und Jonas nicht in den stats zu sehen, vorallem nicht in deren eigenen demos (☑️ - 128 slots + varint fix)
+- falsche teams in stats (champloo team 185 statt 12) (☑️ - DDNet varint + last-team-wins)
 
 
 - detail view slider für %
